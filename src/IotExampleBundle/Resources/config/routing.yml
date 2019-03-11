@@ -1,0 +1,27 @@
+iot_example_homepage:
+    path:     /
+    defaults: { _controller: IotExampleBundle:Default:index }
+iot_buzzer:
+    path:     /updatebuzzer
+    defaults: { _controller: IotExampleBundle:Default:updateBuzzer }
+iot_led:
+    path:     /updateled
+    defaults: { _controller: IotExampleBundle:Default:updateLed }
+iot_getval:
+    path:     /getVal
+    defaults: { _controller: IotExampleBundle:Default:getSpecificValue }
+iot_getvalue:
+    path:     /setValue
+    defaults: { _controller: IotExampleBundle:Default:updateSensor }
+iot_setmessage:
+    path:     /setMsg
+    defaults: { _controller: IotExampleBundle:Default:setMessage }
+iot_getmessage:
+    path:     /getMsg
+    defaults: { _controller: IotExampleBundle:Default:getMessage }
+iot_setsl:
+    path:     /setSeuilLum
+    defaults: { _controller: IotExampleBundle:Default:setSl }
+iot_setst:
+    path:     /setSeuilTemp
+    defaults: { _controller: IotExampleBundle:Default:setSt }

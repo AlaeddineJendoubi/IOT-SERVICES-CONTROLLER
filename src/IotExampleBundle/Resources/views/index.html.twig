@@ -1,0 +1,278 @@
+<html>
+<head>
+    <title>Iot Control</title>
+</head>
+<style>
+    .content {
+
+        position: absolute;
+        color: #fff;
+        top: 50%;
+        left: 50%;
+        padding: 15px;
+        -ms-transform: translateX(-50%) translateY(-50%);
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+
+<body>
+<h1 style="text-align:center">Iot DashBoard</h1>
+<div class="content">
+
+    <table>
+        <tr>
+            <td>
+                <h1> Temperature :</h1>
+            </td>
+            <td>
+                <label id="valueTemp"> valueTemp</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Luminosite :</h1>
+            </td>
+            <td>
+                <label id="valueLum"> valueTemp</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Buzzer Control :</h1>
+            </td>
+            <td>
+                <label class="switch">
+                    <input type="checkbox" id="buzzerSwitch" onchange="updateBuzzer(this.checked)">
+                    <span class="slider round"></span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Led Control :</h1>
+            </td>
+            <td>
+                <label class="switch">
+                    <input type="checkbox" id="ledSwitch" onchange="updateLed(this.checked)">
+                    <span class="slider round"></span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Message :</h1>
+            </td>
+            <td>
+
+                <label id="msg"></label>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Seuil Temp :</h1>
+            </td>
+            <td>
+
+                <label id="seuilTemp"></label>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Seuil Lum :</h1>
+            </td>
+            <td>
+
+                <label id="seuilLum"></label>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Message :</h1>
+            </td>
+            <td>
+
+                <input type="text" id="message" onkeypress="submitMessage(this,event)">
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Seuil Temp :</h1>
+            </td>
+            <td>
+
+                <input type="text" id="seuilTemp" onkeypress="submitSeuilTemp(this,event)">
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h1> Seuil Lum :</h1>
+            </td>
+            <td>
+
+                <input type="text" id="seuilLum" onkeypress="submitSeuilLum(this,event);">
+
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+<script>
+
+    function submitMessage(text, KeyCode) {
+
+        if (KeyCode.keyCode == 13){
+            AjaxconsumeUrl("http://localhost/Iot/web/setMsg?val=", text.value);
+            text.value="";
+        }// enter detected
+
+    }
+    function submitSeuilLum(text, KeyCode) {
+
+        if (KeyCode.keyCode == 13) {// enter detected
+            AjaxconsumeUrl("http://localhost/Iot/web/setSeuilLum?val=", text.value);
+            text.value="";
+        }
+    }
+    function submitSeuilTemp(text, KeyCode) {
+
+        if (KeyCode.keyCode == 13) {// enter detected
+            AjaxconsumeUrl("http://localhost/Iot/web/setSetSeuilTemp?val=", text.value);
+            text.value="";
+        }
+    }
+
+    setInterval(function () {
+        AjaxconsumeAndWaitUrl("http://localhost/Iot/web/getVal?val=", "Message", function () {
+            document.getElementById("msg").innerText = this.responseText;
+        });
+        AjaxconsumeAndWaitUrl("http://localhost/Iot/web/getVal?val=", "LumThreashHold", function () {
+            document.getElementById("seuilLum").innerText = this.responseText;
+        });
+        AjaxconsumeAndWaitUrl("http://localhost/Iot/web/getVal?val=", "TempThreashHold", function () {
+            document.getElementById("seuilTemp").innerText = this.responseText;
+        });
+        AjaxconsumeAndWaitUrl("http://localhost/Iot/web/getVal?val=", "Lum", function () {
+            document.getElementById("valueLum").innerText = this.responseText;
+        });
+        AjaxconsumeAndWaitUrl("http://localhost/Iot/web/getVal?val=", "Temp", function () {
+            document.getElementById("valueTemp").innerText = this.responseText;
+        });
+        AjaxconsumeAndWaitUrl("http://localhost/Iot/web/getVal?val=", "ledState", function () {
+            if (this.responseText == 0)
+                document.getElementById("ledSwitch").checked = 0;
+            else document.getElementById("ledSwitch").checked = 1;
+        });
+        AjaxconsumeAndWaitUrl("http://localhost/Iot/web/getVal?val=", "BuzzerState", function () {
+            if (this.responseText == 0)
+                document.getElementById("buzzerSwitch").checked = 0;
+            else document.getElementById("buzzerSwitch").checked = 1;
+        });
+    }, 2000);
+
+
+    function updateLed(state) {
+        console.log(state + "state");
+        var webservice = "http://localhost/Iot/web/updateled?val=";
+        if (state) {
+            AjaxconsumeUrl(webservice, 1);
+        } else {
+            AjaxconsumeUrl(webservice, 0);
+        }
+
+
+    }
+
+    function updateBuzzer(state) {
+        console.log(state + "state");
+        var webservice = "http://localhost/Iot/web/updatebuzzer?val=";
+        if (state) {
+            AjaxconsumeUrl(webservice, 1);
+        } else {
+            AjaxconsumeUrl(webservice, 0);
+        }
+    }
+
+    function AjaxconsumeAndWaitUrl(url, value, callback) {
+        var oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", callback);
+        oReq.open("GET", url + value);
+        oReq.send();
+    }
+
+    function AjaxconsumeUrl(url, value) {
+        var oReq = new XMLHttpRequest();
+        oReq.open("GET", url + value);
+
+        oReq.send();
+    }
+</script>
+</html>
